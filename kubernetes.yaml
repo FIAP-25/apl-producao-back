@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: mysql
+    labels:
+        app: mysql
+spec:
+    containers:
+        - name: mysql
+          image: mysql
+          env:
+              - name: MYSQL_ROOT_PASSWORD
+                value: root
+              - name: MYSQL_DATABASE
+                value: fiap
+          ports:
+              - containerPort: 3306
+          volumeMounts:
+              - name: mysql-persistent-storage
+                mountPath: /var/lib/mysql
+    volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+              claimName: pvc-mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: node-deployment
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: node
+    template:
+        metadata:
+            labels:
+                app: node
+        spec:
+            containers:
+                - name: node
+                  image: whocastr/apl-back-fiap:4.0.0
+                  ports:
+                      - containerPort: 3000
+                  envFrom:
+                      - secretRef:
+                            name: secret-fiap
+                  livenessProbe:
+                      httpGet:
+                          path: api/health
+                          port: 3000
+                      periodSeconds: 10
+                      failureThreshold: 3
+                      initialDelaySeconds: 20
+                  readinessProbe:
+                      httpGet:
+                          path: api/categorias
+                          port: 3000
+                      periodSeconds: 10
+                      failureThreshold: 5
+                      initialDelaySeconds: 20
+                  resources:
+                      requests:
+                          cpu: 10m
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: pvc-mysql
+spec:
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: service-mysql
+spec:
+    type: LoadBalancer
+    selector:
+        app: mysql
+    ports:
+        - protocol: TCP
+          port: 3306
+          targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: service-node
+spec:
+    type: LoadBalancer
+    selector:
+        app: node
+    ports:
+        - protocol: TCP
+          port: 3000
+          targetPort: 3000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+    name: node-deployment-hpa
+spec:
+    scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: node-deployment
+    minReplicas: 1
+    maxReplicas: 10
+    metrics:
+        - type: Resource
+          resource:
+              name: cpu
+              target:
+                  type: Utilization
+                  averageUtilization: 50
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: secret-fiap
+type: Opaque
+data:
+    NODE_ENV: cHJvZHVjdGlvbg== # Base64-encoded "production"
+    PORT: MzAwMA== # Base64-encoded "3000"
+    DATABASE_HOST: c2VydmljZS1teXNxbA== # Base64-encoded "service-mysql"
+    DATABASE_PORT: MzMwNg== # Base64-encoded "3306"
+    DATABASE_USERNAME: cm9vdA== # Base64-encoded "root"
+    DATABASE_PASSWORD: cm9vdA== # Base64-encoded "root"
+    DATABASE_SCHEMA: ZmlhcA== # Base64-encoded "fiap"

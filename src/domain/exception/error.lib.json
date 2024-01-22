@@ -1,0 +1,10 @@
+{
+    "body-vazio": {
+        "mensagem": "Parâmetros inválidos",
+        "mensagemDetalhe": "Os parâmetros fornecidos são inválidos."
+    },
+    "pedido-existente": {
+        "mensagem": "Pedido já existente.",
+        "mensagemDetalhe": "O pedido já existe em nosso sistema."
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "incremental": true,
+        "outDir": "dist",
+        "module": "commonjs",
+        "target": "es2021",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "rootDirs": ["src", "tests"],
+        "baseUrl": "src",
+        "paths": {
+            "@/tests/*": ["../tests/*"],
+            "@/*": ["*"]
+        },
+        "strict": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "removeComments": true,
+        "noImplicitOverride": true,
+        "useUnknownInCatchVariables": false,
+        "strictPropertyInitialization": false,
+        "noImplicitAny": false
+    },
+    "include": ["src", "tests"],
+    "exclude": []
+}
