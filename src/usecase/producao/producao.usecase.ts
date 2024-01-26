@@ -2,7 +2,6 @@ import { mapper } from '@/application/mapper/base.mapper';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
 import { IProducaoUseCase } from '@/domain/contract/usecase/producao.interface';
 import { Producao } from '@/domain/entity/producao.model';
-import { ErroNegocio } from '@/domain/exception/erro.module';
 import { AtualizarStatusProducaoInput, AtualizarStatusProducaoOutput, CadastrarProducaoInput, CadastrarProducaoOutput } from '@/infrastructure/dto/producao/producao.dto';
 import { Injectable } from '@nestjs/common';
 
@@ -28,7 +27,6 @@ export class ProducaoUseCase implements IProducaoUseCase {
 
     async cadastrarProducao(producao: CadastrarProducaoInput): Promise<CadastrarProducaoOutput> {
         const pedidoExistente = this.filtroListaPedido(producao.pedidoId);
-        console.log(pedidoExistente);
 
         // if (pedidoExistente != null) {
         //     console.log('pedido ja existe');
@@ -40,9 +38,7 @@ export class ProducaoUseCase implements IProducaoUseCase {
             producaoStatus: 'PREPARO'
         };
 
-        console.log(pedido);
         const pagamentoSalvo = await this.producaoRepository.save(pedido);
-        console.log(pagamentoSalvo);
 
         return mapper.map(pagamentoSalvo, Producao, CadastrarProducaoOutput);
     }
