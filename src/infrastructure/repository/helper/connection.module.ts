@@ -12,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             password: 'example',
             database: 'fiap',
             authSource: 'admin',
-            port: 27017,
+            port: 27018,
             entities: [ProducaoEntity],
             synchronize: true
         })
