@@ -1,3 +1,4 @@
+import { IPedidoClient } from '@/domain/client/pedido.client.interface';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
 import { Producao } from '@/domain/entity/producao.model';
 import { AtualizarStatusProducaoInput, CadastrarProducaoInput } from '@/infrastructure/dto/producao/producao.dto';
@@ -7,11 +8,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 describe('ProducaoUseCase', () => {
     let useCase: ProducaoUseCase;
     let mockProducaoRepository: jest.Mocked<IProducaoRepository>;
+    let mockPedidoClient: jest.Mocked<IPedidoClient>;
 
     beforeEach(async () => {
         mockProducaoRepository = {
             find: jest.fn(),
             findByPedidoId: jest.fn(),
+            save: jest.fn()
+        };
+
+        mockPedidoClient = {
             save: jest.fn()
         };
 
@@ -21,6 +27,10 @@ describe('ProducaoUseCase', () => {
                 {
                     provide: IProducaoRepository,
                     useValue: mockProducaoRepository
+                },
+                {
+                    provide: IPedidoClient,
+                    useValue: mockPedidoClient
                 }
             ]
         }).compile();
