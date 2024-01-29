@@ -1,4 +1,5 @@
-import { IPedidoClient } from '@/domain/client/pedido.client.interface';
+
+import { IAxiosClient } from '@/domain/contract/client/axios.interface';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
 import { Producao } from '@/domain/entity/producao.model';
 import { AtualizarStatusProducaoInput, CadastrarProducaoInput } from '@/infrastructure/dto/producao/producao.dto';
@@ -8,7 +9,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 describe('ProducaoUseCase', () => {
     let useCase: ProducaoUseCase;
     let mockProducaoRepository: jest.Mocked<IProducaoRepository>;
-    let mockPedidoClient: jest.Mocked<IPedidoClient>;
+    let mockHttpService: jest.Mocked<IAxiosClient>;
 
     beforeEach(async () => {
         mockProducaoRepository = {
@@ -17,9 +18,9 @@ describe('ProducaoUseCase', () => {
             save: jest.fn()
         };
 
-        mockPedidoClient = {
-            save: jest.fn()
-        };
+        mockHttpService = {
+            executarChamada: jest.fn()
+        }
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -29,8 +30,8 @@ describe('ProducaoUseCase', () => {
                     useValue: mockProducaoRepository
                 },
                 {
-                    provide: IPedidoClient,
-                    useValue: mockPedidoClient
+                    provide: IAxiosClient,
+                    useValue: mockHttpService
                 }
             ]
         }).compile();
@@ -62,6 +63,14 @@ describe('ProducaoUseCase', () => {
     it('deve atualizar o status de produção', async () => {
         const pedidoId = '123';
         const input: AtualizarStatusProducaoInput = { producaoStatus: 'CONCLUIDO' };
+
+        mockHttpService.executarChamada.mockResolvedValue({ 
+            data: 'Mocked response data', 
+            status: 200,             
+            statusText: 'OK', 
+            headers: {}, 
+            config: {} 
+        });
 
         const output = await useCase.atualizarStatusProducao(pedidoId, input);
 

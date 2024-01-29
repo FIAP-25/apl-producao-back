@@ -13,7 +13,8 @@ describe('ProducaoController', () => {
         mockProducaoUseCase = {
             obterListaProducao: jest.fn().mockResolvedValue([]),
             atualizarStatusProducao: jest.fn().mockResolvedValue({}),
-            cadastrarProducao: jest.fn().mockResolvedValue({})
+            cadastrarProducao: jest.fn().mockResolvedValue({}),
+            atualizarPedido: jest.fn().mockResolvedValue({})
         };
 
         const module: TestingModule = await Test.createTestingModule({

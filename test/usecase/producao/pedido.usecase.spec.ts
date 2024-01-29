@@ -1,12 +1,17 @@
+import { IAxiosClient } from '@/domain/contract/client/axios.interface';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
+import { IProducaoUseCase } from '@/domain/contract/usecase/producao.interface';
 import { Producao } from '@/domain/entity/producao.model';
+import { AxiosClient } from '@/infrastructure/client/axios.client';
 import { AtualizarStatusProducaoInput, CadastrarProducaoInput } from '@/infrastructure/dto/producao/producao.dto';
-import { PedidoUseCase } from '@/usecase/producao/pedido.usecase';
+import { ProducaoUseCase } from '@/usecase/producao/producao.usecase';
 import { Test, TestingModule } from '@nestjs/testing';
+import { of } from 'rxjs';
 
 describe('PedidoUseCase', () => {
-    let pedidoUseCase: PedidoUseCase;
+    let producaoUseCase: ProducaoUseCase;
     let mockProducaoRepository: jest.Mocked<IProducaoRepository>;
+    let mockHttpService: jest.Mocked<IAxiosClient>; 
 
     beforeEach(async () => {
         mockProducaoRepository = {
@@ -15,45 +20,49 @@ describe('PedidoUseCase', () => {
             save: jest.fn()
         };
 
+        mockHttpService = {
+            executarChamada: jest.fn()
+        }
+
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                PedidoUseCase,
+                ProducaoUseCase,
                 {
                     provide: IProducaoRepository,
                     useValue: mockProducaoRepository
-                }
+                },
+                { provide: IAxiosClient, useValue: mockHttpService }
             ]
         }).compile();
 
-        pedidoUseCase = module.get<PedidoUseCase>(PedidoUseCase);
+        producaoUseCase = module.get<ProducaoUseCase>(ProducaoUseCase);
     });
 
     it('deve obter a lista de produção', async () => {
         const mockProducoes = [new Producao(), new Producao()];
         mockProducaoRepository.find.mockResolvedValue(mockProducoes);
 
-        const producoes = await pedidoUseCase.obterListaProducao();
+        const producoes = await producaoUseCase.obterListaProducao();
 
         expect(producoes).toEqual(mockProducoes);
         expect(mockProducaoRepository.find).toHaveBeenCalledTimes(1);
-    });
-
-    it('deve filtrar a lista de pedidos pelo ID do pedido', async () => {
-        const mockProducao = new Producao();
-        mockProducaoRepository.findByPedidoId.mockResolvedValue(mockProducao);
-
-        const pedidoId = '123';
-        const producao = await pedidoUseCase.filtroListaPedido(pedidoId);
-
-        expect(producao).toEqual(mockProducao);
-        expect(mockProducaoRepository.findByPedidoId).toHaveBeenCalledWith(pedidoId);
     });
 
     it('deve atualizar o status de produção', async () => {
         const pedidoId = '123';
         const input: AtualizarStatusProducaoInput = { producaoStatus: 'CONCLUIDO' };
 
-        const output = await pedidoUseCase.atualizarStatusProducao(pedidoId, input);
+        //mockHttpService.executarChamada.mockResolvedValue(() => Promise.resolve({}))
+
+        mockHttpService.executarChamada.mockResolvedValue({ 
+            data: 'Mocked response data', 
+            status: 200,             
+            statusText: 'OK', 
+            headers: {}, 
+            config: {} 
+        });
+
+        const output = await producaoUseCase.atualizarStatusProducao(pedidoId, input);
 
         expect(output).toEqual({ id: pedidoId, producaoStatus: input.producaoStatus });
     });
@@ -69,7 +78,7 @@ describe('PedidoUseCase', () => {
 
         mockProducaoRepository.save.mockResolvedValue(novoProducao);
 
-        const output = await pedidoUseCase.cadastrarProducao(input);
+        const output = await producaoUseCase.cadastrarProducao(input);
 
         expect(mockProducaoRepository.save).toHaveBeenCalledWith(
             expect.objectContaining({
