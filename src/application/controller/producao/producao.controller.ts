@@ -18,7 +18,7 @@ export class ProducaoController {
         return ok(pagamentoStatus, res);
     }
 
-    @Patch('atualizar')
+    @Patch('atualizar/:pedidoId')
     @ApiOperation({ summary: 'Atualiza status pagamento pelo id do pedido' })
     async atualizarStatusPagamento(@Param('pedidoId') pedidoId: string, @Body() body: AtualizarStatusProducaoInput, @Res() res: Response): Promise<any> {
         const pedidoAtualizado = await this.producaoUseCase.atualizarStatusProducao(pedidoId, body);

@@ -52,7 +52,7 @@ export class ProducaoUseCase implements IProducaoUseCase {
 
     async atualizarPedido(id: string): Promise<void> {
         await this.axiosClient
-            .executarChamada('pedido', 'patch', `api/pedidos/status/${id}`, { statusTag: 'pedido_finalizado' })
+            .executarChamada('patch', `pedidos/status/${id}`, { statusTag: 'pedido_finalizado' })
             .then((resultado) => {
                 console.log('resultado: ', resultado);
             })
