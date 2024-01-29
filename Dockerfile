@@ -4,6 +4,7 @@ WORKDIR /app
 
 ENV NODE_ENV 'development' 
 ENV PORT 5000 
+ENV URL_BASE 'http://node_pedido:3000/api/'
 
 COPY package.json package-lock.json ./
 

@@ -5,7 +5,7 @@ networks:
         name: mynetwork
 
 services:
-    mongo:
+    mongo_producao:
         image: mongo
         command: mongod --port 27018
         restart: always
@@ -16,6 +16,7 @@ services:
             - 27018:27018
         networks:
             - mynetwork
+        container_name: mongo_producao
 
     node_producao:
         build:
@@ -28,4 +29,4 @@ services:
         ports:
             - '5000:5000'
         depends_on:
-            - mongo
+            - mongo_producao

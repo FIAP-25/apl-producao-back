@@ -1,7 +1,7 @@
 import { mapper } from '@/application/mapper/base.mapper';
+import { IAxiosClient } from '@/domain/contract/client/axios.interface';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
 import { IProducaoUseCase } from '@/domain/contract/usecase/producao.interface';
-import { IPedidoClient } from '@/domain/client/pedido.client.interface';
 import { Producao } from '@/domain/entity/producao.model';
 import { ErroNegocio } from '@/domain/exception/erro.module';
 import { AtualizarStatusProducaoInput, AtualizarStatusProducaoOutput, CadastrarProducaoInput, CadastrarProducaoOutput } from '@/infrastructure/dto/producao/producao.dto';
@@ -9,10 +9,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProducaoUseCase implements IProducaoUseCase {
-    constructor(private producaoRepository: IProducaoRepository, private produtoClient: IPedidoClient) {}
+    constructor(private producaoRepository: IProducaoRepository, private axiosClient: IAxiosClient) {}
+
     async obterListaProducao(): Promise<Producao[]> {
         const response = this.producaoRepository.find();
-        this.produtoClient.save('123');
         return response;
     }
 
@@ -22,6 +22,7 @@ export class ProducaoUseCase implements IProducaoUseCase {
     }
 
     async atualizarStatusProducao(pedidoId: string, input: AtualizarStatusProducaoInput): Promise<AtualizarStatusProducaoOutput> {
+        await this.atualizarPedido(pedidoId);
         return {
             id: pedidoId,
             producaoStatus: input.producaoStatus
@@ -47,5 +48,16 @@ export class ProducaoUseCase implements IProducaoUseCase {
         console.log(pagamentoSalvo);
 
         return mapper.map(pagamentoSalvo, Producao, CadastrarProducaoOutput);
+    }
+
+    async atualizarPedido(id: string): Promise<void> {
+        await this.axiosClient
+            .executarChamada('pedido', 'patch', `api/pedidos/status/${id}`, { statusTag: 'pedido_finalizado' })
+            .then((resultado) => {
+                console.log('resultado: ', resultado);
+            })
+            .catch((erro) => {
+                console.log('erro: ', erro);
+            });
     }
 }

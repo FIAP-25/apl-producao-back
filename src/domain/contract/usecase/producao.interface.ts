@@ -6,4 +6,5 @@ export abstract class IProducaoUseCase {
     abstract obterListaProducao(): Promise<Producao[]>;
     abstract atualizarStatusProducao(pedidoId: string, input: AtualizarStatusProducaoInput): Promise<AtualizarStatusProducaoOutput>;
     abstract cadastrarProducao(producao: CadastrarProducaoInput): Promise<CadastrarProducaoOutput>;
+    abstract atualizarPedido(id: string): Promise<void>;
 }
