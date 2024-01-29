@@ -12,8 +12,8 @@ provider "aws" {
 # ECR Repository
 ###################################################
 
-resource "aws_ecr_repository" "ecr_nest_fiap" {
-  name                 = "apl-nest-fiap"
+resource "aws_ecr_repository" "ecr_nest_fiap_producao" {
+  name                 = "apl-producao-back"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
