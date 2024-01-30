@@ -11,16 +11,24 @@ export class ProducaoController {
     constructor(private producaoUseCase: IProducaoUseCase) {}
 
     @Get('listar')
-    @ApiOperation({ summary: 'Obtem status pagamento pelo id do pedido' })
-    async obterStatusPagamento(@Res() res: Response): Promise<any> {
+    @ApiOperation({ summary: 'Obtem lista producao' })
+    async obterListaProducao(@Res() res: Response): Promise<any> {
+        const pagamentoStatus = await this.producaoUseCase.obterListaProducao();
+
+        return ok(pagamentoStatus, res);
+    }
+
+    @Get('listarProducaoByPedidoId')
+    @ApiOperation({ summary: 'Obtem status producao pelo id do pedido' })
+    async obterPedidoId(@Query('id') id: string, @Res() res: Response): Promise<any> {
         const pagamentoStatus = await this.producaoUseCase.obterListaProducao();
 
         return ok(pagamentoStatus, res);
     }
 
     @Patch('atualizar/:pedidoId')
-    @ApiOperation({ summary: 'Atualiza status pagamento pelo id do pedido' })
-    async atualizarStatusPagamento(@Param('pedidoId') pedidoId: string, @Body() body: AtualizarStatusProducaoInput, @Res() res: Response): Promise<any> {
+    @ApiOperation({ summary: 'Atualiza status producao pelo id do pedido' })
+    async atualizarStatusProducao(@Param('pedidoId') pedidoId: string, @Body() body: AtualizarStatusProducaoInput, @Res() res: Response): Promise<any> {
         const pedidoAtualizado = await this.producaoUseCase.atualizarStatusProducao(pedidoId, body);
 
         return ok(pedidoAtualizado, res);
@@ -28,7 +36,7 @@ export class ProducaoController {
 
     @Post('cadastrar')
     @ApiOperation({ summary: 'Cadastrar uma nova producao' })
-    async pagarPedido(@Body() body: CadastrarProducaoInput, @Res() res: Response): Promise<any> {
+    async cadastrarProducao(@Body() body: CadastrarProducaoInput, @Res() res: Response): Promise<any> {
         const pedidoAtualizado = await this.producaoUseCase.cadastrarProducao(body);
         return ok(pedidoAtualizado, res);
     }

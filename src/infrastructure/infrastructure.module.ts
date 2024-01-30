@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConnectionModule } from './repository/helper/connection.module';
 import { ProducaoEntity } from './entity/producao.entity';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
-import { ProducaoRepository } from './repository/producao/producao.repository';
+import { ProducaoRepository } from './repository/producao/ProducaoRepository';
 import { IAxiosClient } from '@/domain/contract/client/axios.interface';
 import { AxiosClient } from './client/axios.client';
 @Module({
