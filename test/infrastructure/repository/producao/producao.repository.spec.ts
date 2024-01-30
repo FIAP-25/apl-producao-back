@@ -1,5 +1,5 @@
 import { ProducaoEntity } from '@/infrastructure/entity/producao.entity';
-import { ProducaoRepository } from '@/infrastructure/repository/producao/ProducaoRepository';
+import { ProducaoRepository } from '@/infrastructure/repository/producao/producao.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -57,5 +57,22 @@ describe('ProducaoRepository', () => {
 
         expect(savedProducao).toBeDefined();
         expect(mockProducaoRepository.save).toHaveBeenCalledWith(mockProducao);
+    });
+
+    it('deve retornar null ao não encontrar produção pelo ID do pedido', async () => {
+        (mockProducaoRepository.findOneBy as jest.Mock).mockResolvedValue(null);
+
+        const pedidoId = '123';
+        const producao = await repository.findByPedidoId(pedidoId);
+
+        expect(producao).toBeNull();
+        expect(mockProducaoRepository.findOneBy).toHaveBeenCalledWith({ pedidoId });
+    });
+
+    it('deve lançar exceção ao falhar ao encontrar produções', async () => {
+        const error = new Error('Erro no banco de dados');
+        (mockProducaoRepository.find as jest.Mock).mockRejectedValue(error);
+
+        await expect(repository.find()).rejects.toThrow(error);
     });
 });
