@@ -11,18 +11,18 @@ import { of } from 'rxjs';
 describe('PedidoUseCase', () => {
     let producaoUseCase: ProducaoUseCase;
     let mockProducaoRepository: jest.Mocked<IProducaoRepository>;
-    let mockHttpService: jest.Mocked<IAxiosClient>; 
+    let mockHttpService: jest.Mocked<IAxiosClient>;
 
     beforeEach(async () => {
         mockProducaoRepository = {
             find: jest.fn(),
             findByPedidoId: jest.fn(),
-            save: jest.fn()
+            save: jest.fn(),
         };
 
         mockHttpService = {
             executarChamada: jest.fn()
-        }
+        };
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -54,12 +54,12 @@ describe('PedidoUseCase', () => {
 
         //mockHttpService.executarChamada.mockResolvedValue(() => Promise.resolve({}))
 
-        mockHttpService.executarChamada.mockResolvedValue({ 
-            data: 'Mocked response data', 
-            status: 200,             
-            statusText: 'OK', 
-            headers: {}, 
-            config: {} 
+        mockHttpService.executarChamada.mockResolvedValue({
+            data: 'Mocked response data',
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: {}
         });
 
         const output = await producaoUseCase.atualizarStatusProducao(pedidoId, input);
@@ -70,7 +70,7 @@ describe('PedidoUseCase', () => {
     it('deve cadastrar produção', async () => {
         const input: CadastrarProducaoInput = { pedidoId: '123' };
 
-        mockProducaoRepository.findByPedidoId.mockResolvedValue(null);
+        mockProducaoRepository.findByPedidoId.mockResolvedValue(null as unknown as Producao);
 
         const novoProducao = new Producao();
         novoProducao.pedidoId = input.pedidoId;

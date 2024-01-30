@@ -1,4 +1,3 @@
-
 import { IAxiosClient } from '@/domain/contract/client/axios.interface';
 import { IProducaoRepository } from '@/domain/contract/repository/producao.interface';
 import { Producao } from '@/domain/entity/producao.model';
@@ -15,12 +14,12 @@ describe('ProducaoUseCase', () => {
         mockProducaoRepository = {
             find: jest.fn(),
             findByPedidoId: jest.fn(),
-            save: jest.fn()
+            save: jest.fn(),
         };
 
         mockHttpService = {
             executarChamada: jest.fn()
-        }
+        };
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -54,7 +53,7 @@ describe('ProducaoUseCase', () => {
         mockProducaoRepository.findByPedidoId.mockResolvedValue(mockProducao);
 
         const pedidoId = '123';
-        const producao = await useCase.filtroListaPedido(pedidoId);
+        const producao = await useCase.obterPedidoId(pedidoId);
 
         expect(producao).toBeDefined();
         expect(mockProducaoRepository.findByPedidoId).toHaveBeenCalledWith(pedidoId);
@@ -64,12 +63,12 @@ describe('ProducaoUseCase', () => {
         const pedidoId = '123';
         const input: AtualizarStatusProducaoInput = { producaoStatus: 'CONCLUIDO' };
 
-        mockHttpService.executarChamada.mockResolvedValue({ 
-            data: 'Mocked response data', 
-            status: 200,             
-            statusText: 'OK', 
-            headers: {}, 
-            config: {} 
+        mockHttpService.executarChamada.mockResolvedValue({
+            data: 'Mocked response data',
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: {}
         });
 
         const output = await useCase.atualizarStatusProducao(pedidoId, input);
@@ -80,7 +79,7 @@ describe('ProducaoUseCase', () => {
     it('deve cadastrar produção', async () => {
         const input: CadastrarProducaoInput = { pedidoId: '123' };
 
-        mockProducaoRepository.findByPedidoId.mockResolvedValue(null);
+        mockProducaoRepository.findByPedidoId.mockResolvedValue(null as unknown as Producao);
 
         const novoProducao = new Producao();
         novoProducao.pedidoId = input.pedidoId;

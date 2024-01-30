@@ -14,7 +14,8 @@ describe('ProducaoController', () => {
             obterListaProducao: jest.fn().mockResolvedValue([]),
             atualizarStatusProducao: jest.fn().mockResolvedValue({}),
             cadastrarProducao: jest.fn().mockResolvedValue({}),
-            atualizarPedido: jest.fn().mockResolvedValue({})
+            atualizarPedido: jest.fn().mockResolvedValue({}),
+            obterPedidoId: jest.fn().mockResolvedValue({})
         };
 
         const module: TestingModule = await Test.createTestingModule({
@@ -49,7 +50,7 @@ describe('ProducaoController', () => {
             mockProducaoUseCase.obterListaProducao.mockResolvedValue(mockResponseData);
 
             const mockRes = mockResponse();
-            await controller.obterStatusPagamento(mockRes);
+            await controller.obterListaProducao(mockRes);
             expect(mockRes.status).toHaveBeenCalledWith(200);
             expect(mockRes.json).toHaveBeenCalledWith({ dados: mockResponseData });
         });
@@ -68,7 +69,7 @@ describe('ProducaoController', () => {
             };
 
             const mockRes = mockResponse();
-            await controller.atualizarStatusPagamento('1', atualizarStatusProducaoInput, mockRes);
+            await controller.atualizarStatusProducao('1', atualizarStatusProducaoInput, mockRes);
             expect(mockRes.status).toHaveBeenCalledWith(200);
             expect(mockRes.json).toHaveBeenCalledWith({ dados: mockPedido });
         });
@@ -84,7 +85,7 @@ describe('ProducaoController', () => {
             mockProducaoUseCase.cadastrarProducao.mockResolvedValue(mockPedido);
 
             const mockRes = mockResponse();
-            await controller.pagarPedido(
+            await controller.cadastrarProducao(
                 {
                     pedidoId: '123',
                     produtoId: '456',
