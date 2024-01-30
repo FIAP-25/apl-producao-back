@@ -1,5 +1,5 @@
 import { ProducaoEntity } from '@/infrastructure/entity/producao.entity';
-import { ProducaoRepository } from '@/infrastructure/repository/producao/ProducaoRepository';
+import { ProducaoRepository } from '@/infrastructure/repository/producao/producao.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
