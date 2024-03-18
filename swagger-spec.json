@@ -1,0 +1,171 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/producao/listar": {
+      "get": {
+        "operationId": "ProducaoController_obterListaProducao",
+        "summary": "Obtem lista producao",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Producao"
+        ]
+      }
+    },
+    "/api/producao/listarProducaoByPedidoId": {
+      "get": {
+        "operationId": "ProducaoController_obterPedidoId",
+        "summary": "Obtem status producao pelo id do pedido",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Producao"
+        ]
+      }
+    },
+    "/api/producao/atualizar/{pedidoId}": {
+      "patch": {
+        "operationId": "ProducaoController_atualizarStatusProducao",
+        "summary": "Atualiza status producao pelo id do pedido",
+        "parameters": [
+          {
+            "name": "pedidoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarStatusProducaoInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Producao"
+        ]
+      }
+    },
+    "/api/producao/cadastrar": {
+      "post": {
+        "operationId": "ProducaoController_cadastrarProducao",
+        "summary": "Cadastrar uma nova producao",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CadastrarProducaoInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Producao"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_health",
+        "summary": "Obtém a saúde do sistema",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "operationId": "BaseController_redirectToSwagger",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Base"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "FIAP - 25 API",
+    "description": "Documentação API.",
+    "version": "2.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Servidor de Desenvolvimento"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "AtualizarStatusProducaoInput": {
+        "type": "object",
+        "properties": {
+          "producaoStatus": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "producaoStatus"
+        ]
+      },
+      "CadastrarProducaoInput": {
+        "type": "object",
+        "properties": {
+          "pedidoId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "pedidoId"
+        ]
+      }
+    }
+  }
+}
