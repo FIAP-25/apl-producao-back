@@ -43,7 +43,6 @@ async function bootstrap(): Promise<void> {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
 
-<<<<<<< HEAD
     app.connectMicroservice<MicroserviceOptions>({
         transport: Transport.RMQ,
         options: {
@@ -56,10 +55,8 @@ async function bootstrap(): Promise<void> {
     });
 
     await app.startAllMicroservices();
-=======
     fs.writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
 
->>>>>>> 48898357021b6d1327bd6e66109b530e9aa07941
     await app.listen(port);
 
     console.log(`Application is running on: ${await app.getUrl()}`);
