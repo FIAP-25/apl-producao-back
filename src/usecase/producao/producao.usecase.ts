@@ -4,12 +4,13 @@ import { IProducaoRepository } from '@/domain/contract/repository/producao.inter
 import { IProducaoUseCase } from '@/domain/contract/usecase/producao.interface';
 import { Producao } from '@/domain/entity/producao.model';
 import { AtualizarStatusProducaoInput, AtualizarStatusProducaoOutput, CadastrarProducaoInput, CadastrarProducaoOutput } from '@/infrastructure/dto/producao/producao.dto';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { ObjectId } from 'typeorm';
 
 @Injectable()
 export class ProducaoUseCase implements IProducaoUseCase {
-    constructor(private producaoRepository: IProducaoRepository, private axiosClient: IAxiosClient) {}
+    constructor(private producaoRepository: IProducaoRepository, private axiosClient: IAxiosClient, @Inject('PRODUCTION_STATUS_ORDER') private readonly client: ClientProxy) {}
 
     async obterListaProducao(): Promise<Producao[]> {
         const response = this.producaoRepository.find();
@@ -22,7 +23,11 @@ export class ProducaoUseCase implements IProducaoUseCase {
     }
 
     async atualizarStatusProducao(pedidoId: string, input: AtualizarStatusProducaoInput): Promise<AtualizarStatusProducaoOutput> {
-        await this.atualizarPedido(pedidoId);
+        var body = {
+            id: pedidoId,
+            statusTag: 'pedido_finalizado'
+        };
+        await this.client.emit('production_status_order', body);
 
         const pedidoResponse = await this.obterPedidoId(pedidoId);
 

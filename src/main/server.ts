@@ -5,8 +5,9 @@ import { ExceptionInterceptor } from '@/application/interceptor/exception.interc
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ServerModule } from './server.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
-const port = process.env.PORT ?? 3000;
+const port = process.env.PORT ?? 4000;
 
 async function bootstrap(): Promise<void> {
     if (process.env.NODE_ENV === 'production') {
@@ -24,7 +25,20 @@ async function bootstrap(): Promise<void> {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
 
+    app.connectMicroservice<MicroserviceOptions>({
+        transport: Transport.RMQ,
+        options: {
+            urls: ['amqps://chyxnisa:IlFy9-SQGf3KRAp_JBcRDuzTeA1fPHrv@woodpecker.rmq.cloudamqp.com/chyxnisa'],
+            queue: 'production-queue',
+            queueOptions: {
+                durable: false
+            }
+        }
+    });
+
+    await app.startAllMicroservices();
     await app.listen(port);
+
     console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
